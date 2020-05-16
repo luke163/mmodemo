@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../../output/server</OutputPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Label="IceBuilder">
+    <SliceCompile>
+      <OutputDir>$(MSBuildProjectDirectory)\generated</OutputDir>
+      <IncludeDirectories>$(SolutionDir)\src\FootStone.Protocolce\slice</IncludeDirectories>
+      <AdditionalOptions></AdditionalOptions>
+    </SliceCompile>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <Folder Include="generated\" />
+    <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
+    <PackageReference Include="zeroc.icebuilder.msbuild" Version="5.0.4" />
+    <Compile Update="generated\Player.cs">
+      <SliceCompileSource>slice\Player.ice</SliceCompileSource>
+    </Compile>
+    <Compile Update="generated\RoleMaster.cs">
+      <SliceCompileSource>slice\RoleMaster.ice</SliceCompileSource>
+    </Compile>
+    <Compile Update="generated\World.cs">
+      <SliceCompileSource>slice\World.ice</SliceCompileSource>
+    </Compile>
+    <Compile Update="generated\Zone.cs">
+      <SliceCompileSource>slice\Zone.ice</SliceCompileSource>
+    </Compile>
+  </ItemGroup>
+
+</Project>

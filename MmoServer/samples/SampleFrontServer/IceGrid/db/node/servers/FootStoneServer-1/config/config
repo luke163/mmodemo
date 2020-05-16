@@ -1,0 +1,21 @@
+# Configuration file (05/12/20 20:56:00.374)
+
+# Server configuration
+Ice.Admin.ServerId=FootStoneServer-1
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=FootStoneServer-1
+# Object adapter SessionFactoryAdapter
+SessionFactoryAdapter.Endpoints=tcp -h 127.0.0.1 -p 12000
+SessionFactoryAdapter.AdapterId=FootStoneServer-1.SessionFactoryAdapter
+SessionFactoryAdapter.ReplicaGroupId=ReplicatedSessionFactoryAdapter
+# Server descriptor properties
+Identity=sessionFactory
+IceMX.Metrics.Debug.GroupBy=id
+IceMX.Metrics.Debug.Disabled=1
+IceMX.Metrics.ByParent.GroupBy=parent
+IceMX.Metrics.ByParent.Disabled=1
+Ice.Trace.Locator=1
+Ice.Trace.Network=2
+Ice.Trace.Retry=1
+Ice.Trace.Protocol=0
+Ice.Default.Locator=FootStone/Locator:default -h 127.0.0.1 -p 4061

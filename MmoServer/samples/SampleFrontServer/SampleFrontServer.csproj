@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\output\server</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>../../output/server</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Program.cs~RF1a9f336.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FootStone.Core\FootStone.Core.csproj" />
+    <ProjectReference Include="..\SampleInterface\SampleInterface.csproj" />
+    <ProjectReference Include="..\SampleProtocol\SampleProtocol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="StartFrontServer.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
