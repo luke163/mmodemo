@@ -102,20 +102,38 @@ namespace SampleClient
                     NLogger.Info($"session:{session.GetId()} destroyed!");
                 });
 
-                //注册账号           
-                var accountPrx = session.UncheckedCast(IAccountPoPrxHelper.uncheckedCast, IAccountPoPrxHelper.ice_staticId());
-                try
-                {
-                    var ret = await accountPrx.LoginRequestAsync(account, password);
-                    NLogger.Debug("RegisterRequest ok:" + account + ", result=" + ret);
-                }
-                catch (Ice.Exception ex)
-                {
-                    NLogger.Debug("RegisterRequest fail:" + ex.Message);
-                }
+                //注册账号
+				var playerprx = session.UncheckedCast(IPlayerCoPrxHelper.uncheckedCast, IPlayerCoPrxHelper.ice_staticId());
+				var ret = await playerprx.RegOrLoginReqAsync(account, password);
+				NLogger.Debug("RegOrLoginReqAsync ok:" + account + ", result=" + ret);
 
+				var zoneprx = session.UncheckedCast(IZoneCoPrxHelper.uncheckedCast, IZoneCoPrxHelper.ice_staticId());
+				await zoneprx.TestApiReqAsync();
+				NLogger.Debug("TestApiReqAsync ok:" + account);
+				
+				
+                for (int i = 0; i < 20; ++i)
+                {
+                    var str = Console.In.ReadLine();
+                    switch(str)
+					{
+						case "1":
+						await zoneprx.TestApiReq2Async();
+						break;
+						
+						case "13":
+						await zoneprx.TestApiReq3Async();
+						break;
+					}
+                }
+				
+				
                 NLogger.Info($"{account} playerPrx end!");
             }
+			catch (Ice.Exception ex)
+			{
+				NLogger.Error(account + ":" + ex.Message);
+			}
             catch (System.Exception e)
             {
                 NLogger.Error(account + ":" + e.ToString());

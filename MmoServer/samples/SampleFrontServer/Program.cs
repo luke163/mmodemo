@@ -7,9 +7,11 @@ using Orleans.Hosting;
 using System;
 using System.Threading.Tasks;
 using FootStone.Core;
+using FootStone.FrontIce;
 using FootStone.FrontOrleans;
+using Sample.Protocol;
 
-namespace FootStone.SampleFrontServer
+namespace Sample.FrontServer
 {
     class Program
     {
@@ -48,7 +50,7 @@ namespace FootStone.SampleFrontServer
             });
 
             //使用Ice
-            hostBuilder.UseFrontIce();
+            hostBuilder.UseFrontService();
 
             hostBuilder.ConfigureServices(services =>
             {
@@ -57,6 +59,29 @@ namespace FootStone.SampleFrontServer
             hostBuilder.ConfigureLogging(builder => builder.AddProvider(new NLoggerProvider()));
 
             return hostBuilder.RunConsoleAsync();
+        }
+    }
+
+    /*************************************************************************************************/
+
+    public static class SampleServiceHostingExtensions
+    {
+        private static void InitIceOptions(IceOptions iceOptions)
+        {
+            iceOptions.ConfigFile = "Ice.config";
+            iceOptions.AddFacetType(typeof(PlayerPocol), IPlayerCoPrxHelper.ice_staticId());
+            //iceOptions.FacetTypes.Add(typeof(WorldI));
+            //iceOptions.FacetTypes.Add(typeof(PlayerI));
+            //iceOptions.FacetTypes.Add(typeof(RoleMasterI));
+            iceOptions.AddFacetType(typeof(ZonePocol), IZoneCoPrxHelper.ice_staticId());
+        }
+
+        public static IHostBuilder UseFrontService(this IHostBuilder builder)
+        {
+            builder.UseFrontObserver();
+            builder.UseFrontIce(iceOptions => InitIceOptions(iceOptions));
+
+            return builder;
         }
     }
 }

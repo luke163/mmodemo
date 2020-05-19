@@ -8,10 +8,10 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using FootStone.Core;
-using Sample.Grains;
-using FootStone.SampleFrontServer;
+using Sample.Grain;
+using Sample.FrontServer;
 
-namespace FootStone.SampleBackServer
+namespace Sample.BackServer
 {
     public class Program
     {
@@ -48,7 +48,7 @@ namespace FootStone.SampleBackServer
                     options.ServiceId = "Sample";
                 });
                 silo.ConfigureEndpoints(IPAddress.Loopback, 11111, 30000);
-                silo.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(PartyGrain).Assembly).WithReferences());
+                silo.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(AccountGrain).Assembly).WithReferences());
                 //silo.AddAdoNetGrainStorage("ado1", options =>
                 //{
                 //    options.UseJsonFormat = true;
@@ -58,7 +58,7 @@ namespace FootStone.SampleBackServer
             });
 
             //Ìí¼ÓICE FrontÖ§³Ö
-            hostBuilder.UseFrontIce();
+            hostBuilder.UseFrontService();
 
             hostBuilder.ConfigureServices(services =>
             {

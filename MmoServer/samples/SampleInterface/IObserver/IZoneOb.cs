@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Sample.Interface
 {
-    public interface IAccountOb : IGrainObserver
+    public interface IZoneOb : IGrainObserver
     {
-        void AccountLogined(string sessionId);
+        void OnNext(string token);
     }
 }

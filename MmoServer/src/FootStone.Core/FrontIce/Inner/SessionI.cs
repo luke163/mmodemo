@@ -8,14 +8,17 @@ namespace FootStone.FrontIce
     {
         private static ulong sss = 0;
 
-        public String Id { get; }
+        public string Id { get; }
         public ISessionPushPrx SessionPushPrx { get; private set; }
-        private Dictionary<String, object> attributeDict = new Dictionary<string, object>();
+        private Dictionary<string, object> attributes = new Dictionary<string, object>();
+        private string bindIdentify;
+        private string addressIdentify;
 
-        public SessionI(ISessionPushPrx proxy)
+        public SessionI(ISessionPushPrx proxy, string addresskey)
         {
             this.Id = (++sss).ToString();
             this.SessionPushPrx = proxy;
+            this.addressIdentify = addresskey;
         }
 
         public void Destroy()
@@ -25,22 +28,36 @@ namespace FootStone.FrontIce
 
         public T Get<T>(string key)
         {
-            if (!attributeDict.ContainsKey(key))
+            if (!attributes.ContainsKey(key))
             {
                 return default(T);
             }
-            return (T)attributeDict[key];
+            return (T)attributes[key];
         }
 
-        public void Bind<T>(string key, T value)
+        public void Push<T>(string key, T value)
         {
-            attributeDict.Add(key, value);
+            attributes.Add(key, value);
         }
 
-        public void Unbind(string key)
+        public void Unpush(string key)
         {
-            attributeDict.Remove(key);
+            attributes.Remove(key);
         }
+
+        public void Bind(string key)
+        {
+            IceFrontSessionExtensions.sessionBinds.TryAdd(key, addressIdentify);
+            bindIdentify = key;
+        }
+
+        public void Unbind()
+        {
+            IceFrontSessionExtensions.sessionBinds.TryRemove(bindIdentify, out _);
+            bindIdentify = null;
+        }
+
+        public string Identity => bindIdentify;
 
         public void Dispose()
         {

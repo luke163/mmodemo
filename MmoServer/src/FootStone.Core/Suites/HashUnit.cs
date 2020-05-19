@@ -8,7 +8,7 @@ namespace FootStone.Core
     {
         private static MD5 md5Hash = MD5.Create();
 
-        public static string GetMd5Hash(string input)
+        public static string GetMd5Str(string input)
         {
             // Convert the input string to a byte array and compute the hash.
             byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));

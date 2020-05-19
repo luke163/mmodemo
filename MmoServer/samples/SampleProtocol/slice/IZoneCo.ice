@@ -10,9 +10,13 @@ module Sample
 {
 	module Protocol
 	{
-		["amd"]interface IAccountPo
+		["amd"]interface IZoneCo
 		{
-		   byte LoginRequest(string account, string pwd);
+		   void TestApiReq();
+		   
+		   void TestApiReq2();
+		   
+		   void TestApiReq3();
 		}   	
 	}
 }

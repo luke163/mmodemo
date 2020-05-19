@@ -64,6 +64,7 @@ namespace FootStone.Core
         }
     }
 
+    /*************************************************************************************/
 
     public class NLogice : Ice.Logger
     {
@@ -101,9 +102,15 @@ namespace FootStone.Core
         {
             return Prefix;
         }
+
         public Ice.Logger cloneWithPrefix(string prefix)
         {
             return null;
+        }
+
+        public void debug(string message)
+        {
+            logger.Debug(message);
         }
     }
 }

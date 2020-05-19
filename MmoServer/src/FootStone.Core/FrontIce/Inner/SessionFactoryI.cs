@@ -7,7 +7,6 @@ using Ice;
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using FootStone.Core;
 
 namespace FootStone.FrontIce
 {
@@ -15,12 +14,10 @@ namespace FootStone.FrontIce
     {
         private Ice.Logger logger;
         private string serverName;
-        private IDictionary<string, SessionI> sessions;
 
-        public SessionFactoryI(string name, IDictionary<string, SessionI> dict, Ice.Logger log)
+        public SessionFactoryI(string name, Ice.Logger log)
         {
             this.serverName = name;
-            this.sessions = dict;
             this.logger = log;
         }
 
@@ -28,19 +25,19 @@ namespace FootStone.FrontIce
         {
             if (!(current.con.getInfo() is Ice.TCPConnectionInfo connection))
             {
-                logger.error($"Type of current.con is not ConnectionInfo!!!");
+                logger.error($"A ## Type of current.con is not TCPConnectionInfo!!!");
                 return;
             }
 
-            var sessionI = new SessionI(proxy);
-            var md5key = HashUnit.GetMd5Hash(connection.remoteAddress + ":" + connection.remotePort);
+            var key = FootStone.Core.HashUnit.GetMd5Str(connection.remoteAddress + ":" + connection.remotePort);
+            var sessionI = new SessionI(proxy, key);
             // Never close this connection from the client and turn on heartbeats with a timeout of 30s
             current.con.getInfo().connectionId = sessionI.Id;
             current.con.setACM(30, ACMClose.CloseOff, ACMHeartbeat.HeartbeatAlways);
-            current.con.setCloseCallback(_ => DestroySession(md5key));
+            current.con.setCloseCallback(_ => DestroySession(key));
 
-            sessions.Add(md5key, sessionI);
-            logger.print($"Create session :{sessionI.Id},{serverName} sessions count:{sessions.Count}");
+            IceFrontSessionExtensions.sessions.TryAdd(key, sessionI);
+            logger.print($"Create session :{sessionI.Id},{serverName} sessions count:{IceFrontSessionExtensions.sessions.Count}");
         }
 
         public override void Shutdown(Ice.Current current)
@@ -53,10 +50,13 @@ namespace FootStone.FrontIce
 
         private void DestroySession(string key)
         {
-            SessionI sessionI;
-            var ret = sessions.Remove(key, out sessionI);
-            if (ret) logger.print($"{sessionI.Id} is destroyed from thread " +
-                $"{Thread.CurrentThread.ManagedThreadId},current sessions count:{sessions.Count}.");
+            var ret = IceFrontSessionExtensions.sessions.Remove(key, out SessionI sessionI);
+            sessionI.Unbind();
+            if (ret)
+            {
+                logger.print($"{sessionI.Id} is destroyed from thread " + $"{Thread.CurrentThread.ManagedThreadId}," +
+                    $"current sessions count:{IceFrontSessionExtensions.sessions.Count}.");
+            }
         }
     }
 

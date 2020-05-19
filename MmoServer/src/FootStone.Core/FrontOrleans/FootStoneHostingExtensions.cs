@@ -30,5 +30,17 @@ namespace FootStone.FrontOrleans
 
             return hostBuilder;
         }
+
+        public static IHostBuilder UseFrontObserver(this IHostBuilder builder)
+        {
+            var key = "IsUseFrontObserver";
+            if (builder.Properties.ContainsKey(key)) return builder;
+
+            builder.Properties.Add(key, true);
+            builder.ConfigureServices(services => {
+                services.AddSingleton<IObserverClient>(_ => new ObserverClient(_.GetService<IClusterClient>()));
+            });
+            return builder;
+        }
     }
 }

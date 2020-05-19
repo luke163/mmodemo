@@ -3,10 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sample.Interface
+namespace Sample.Grain
 {
-    public interface IAccountGr : IGrainWithStringKey
+    public struct ResultRLTo
     {
-        Task Login(string sessionId, string account, string pwd);
+        public byte ret;
+        public string idcode;
+        public string username;
+        public string password;
+    }
+
+    public class UserInfo
+    {
+        public string idcode;
+        public string username;
+        public string password;
+    }
+
+    public interface IAccountGr : IGrainWithGuidKey
+    {
+        Task<ResultRLTo> RegistOrLoginAsync(string account, string pwd);
+
+        Task<UserInfo> GetUserInfoAsync(string idcode);
     }
 }

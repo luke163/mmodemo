@@ -17,7 +17,6 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <Folder Include="generated\" />
     <PackageReference Include="zeroc.ice.net" Version="3.7.1" />
     <PackageReference Include="zeroc.icebuilder.msbuild" Version="5.0.4" />
     <Compile Update="generated\Player.cs">
@@ -32,6 +31,10 @@
     <Compile Update="generated\Zone.cs">
       <SliceCompileSource>slice\Zone.ice</SliceCompileSource>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="generated\" />
   </ItemGroup>
 
 </Project>
