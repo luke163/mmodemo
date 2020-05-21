@@ -8,7 +8,7 @@ using Sample.Interface;
 
 namespace Sample.Protocol
 {
-    internal class ZoneObserver : IZoneOb
+    internal class ZoneObserver : IZoneOb , IObserverBase
     {
 
         public ZoneObserver()
@@ -38,18 +38,20 @@ namespace Sample.Protocol
         {
             var zoneGrain1 = OrleansClient.GetGrain<IZoneGr>(1);
             var zonekey1 = await ObserverClient.GetObserver<ZoneObserver, IZoneOb>(1);
-            var ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey1, ob => { zoneGrain1.SubscribeAsync(ob); });
-            logger.Debug(zonekey1 + " -------- " + ccc);
+            //var ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey1, ob => { zoneGrain1.SubscribeAsync(ob); });
+            //logger.Debug(zonekey1 + " -------- " + ccc);
 
-            var zonekey2 = await ObserverClient.GetObserver<ZoneObserver, IZoneOb>(1);
-            ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey2, ob => { zoneGrain1.SubscribeAsync(ob); });
-            logger.Debug(zonekey2 + " -------- " + ccc);
+            //var zonekey2 = await ObserverClient.GetObserver<ZoneObserver, IZoneOb>(1);
+            //ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey2, ob => { zoneGrain1.SubscribeAsync(ob); });
+            //logger.Debug(zonekey2 + " -------- " + ccc);
 
+            //var zoneGrain13 = OrleansClient.GetGrain<IZoneGr>(13);
+            //var zonekey3 = await ObserverClient.GetObserver<ZoneObserver, IZoneOb>(13);
+            //ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey3, ob => { zoneGrain13.SubscribeAsync(ob); });
+            //logger.Debug(zonekey3 + " -------- " + ccc);
 
-            var zoneGrain13 = OrleansClient.GetGrain<IZoneGr>(13);
-            var zonekey3 = await ObserverClient.GetObserver<ZoneObserver, IZoneOb>(13);
-            ccc = ObserverClient.SubscribeWrap<IZoneOb>(zonekey3, ob => { zoneGrain13.SubscribeAsync(ob); });
-            logger.Debug(zonekey3 + " -------- " + ccc);
+            var contcp = current.con.getInfo() as Ice.TCPConnectionInfo;
+            logger.Debug("TestApiReqAsync链接标识符 connectid -------- " + contcp.connectionId);
         }
 
         public async override Task TestApiReq2Async(Ice.Current current)
@@ -57,6 +59,9 @@ namespace Sample.Protocol
             var zoneGrain1 = OrleansClient.GetGrain<IZoneGr>(1);
 
             await zoneGrain1.PushMessageForTest($"来自于grain一的消息{Thread.CurrentThread.ManagedThreadId}");
+
+            var contcp = current.con.getInfo() as Ice.TCPConnectionInfo;
+            logger.Debug("TestApiReq2Async链接标识符 connectid -------- " + contcp.connectionId);
         }
 
         public async override Task TestApiReq3Async(Ice.Current current)
@@ -64,6 +69,9 @@ namespace Sample.Protocol
             var zoneGrain13 = OrleansClient.GetGrain<IZoneGr>(13);
 
             await zoneGrain13.PushMessageForTest($"来自于grain十三的消息，啦啦啦啦啦啦啦啦{Thread.CurrentThread.ManagedThreadId}");
+
+            var contcp = current.con.getInfo() as Ice.TCPConnectionInfo;
+            logger.Debug("TestApiReq3Async链接标识符 connectid -------- " + contcp.connectionId);
         }
 
     }

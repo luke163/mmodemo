@@ -121,10 +121,10 @@ namespace FootStone.Client
             //获取session factory
             var tmpconid = Guid.NewGuid().ToString("N");
             var sessionFactoryPrx = ISessionFactoryPrxHelper
-               .uncheckedCast(Communicator.stringToProxy("sessionFactory")
-               .ice_locatorCacheTimeout(0)
-               .ice_connectionId(tmpconid)
-               .ice_timeout(15000));
+                .uncheckedCast(Communicator.stringToProxy("sessionFactory")
+                .ice_locatorCacheTimeout(0)
+                .ice_connectionId(tmpconid)
+                .ice_timeout(15000));
 
             //建立网络连接,设置心跳为30秒
             Connection connection = await sessionFactoryPrx.ice_getConnectionAsync();

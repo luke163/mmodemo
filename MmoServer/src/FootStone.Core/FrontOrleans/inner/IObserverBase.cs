@@ -4,6 +4,11 @@ using Orleans;
 
 namespace FootStone.FrontOrleans
 {
+    public interface IObserverBase
+    {
+
+    }
+
     public interface IObserverClient
     {
         public Task<string> GetObserver<TObserver, IObserver>(Guid primaryKey) 

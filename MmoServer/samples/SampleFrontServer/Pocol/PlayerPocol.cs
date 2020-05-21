@@ -8,7 +8,7 @@ namespace Sample.Protocol
 {
     public class PlayerPocol : IPlayerCoDisp_, IServantBase
     {
-        //private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public IClusterClient OrleansClient { get; private set; }
 		public IObserverClient ObserverClient { get; private set; }
 
@@ -22,13 +22,13 @@ namespace Sample.Protocol
         {
             var acctGrain = OrleansClient.GetGrain<IAccountGr>(System.Guid.Empty); //统一的账户管理器
             var to = await acctGrain.RegistOrLoginAsync(account, pwd);
-            var session = current.ObtainSessionByIPAddress();
             RLResultRes res = new RLResultRes() { ret = to.ret };
-            if (!(session is null) && to.ret == 0)
+            if (to.ret == 0)
             {
                 res.idcode = to.idcode;
-                session.Bind(to.idcode); //绑定应用层身份用于推送
-                session.Push<string>("__identity__", to.idcode); //设置合法性标识用于验证是否拦截
+                var session = current.BindSession(to.idcode, out _); //绑定应用层身份用于推送
+                session?.Push<string>("__identity__", to.idcode); //设置合法性标识用于验证是否拦截
+                logger.Debug($"{account} 绑定标识符 {to.idcode}");
             }
 
             return res;
@@ -36,7 +36,7 @@ namespace Sample.Protocol
 
         public async override Task<bool> JoinSceneReqAsync(byte sceneid, Ice.Current current = null)
         {
-            var session = current.ObtainSessionByIPAddress();
+            var session = this.ObtainSession(current);
             if (!session.IsLegalIdentify())
             {
                 return false;

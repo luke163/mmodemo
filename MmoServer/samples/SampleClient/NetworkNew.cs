@@ -81,15 +81,21 @@ namespace SampleClient
             for (ushort i = startIndex; i < startIndex + count; ++i)
             {
                 var sessionId = "session" + i;
-                var session = await client.CreateSession(ip, port);
-                _ = RunSession(session, i, 20, needNetty);
+                try
+                {
+                    var session = await client.CreateSession(ip, port);
+                    _ = RunSession(session, i, 20, needNetty);
+                }catch(System.Exception e)
+                {
+                    NLogger.Error(e.ToString());
+                }
                 playerCount++;
                 await Task.Delay(10);
             }
             NLogger.Info("all session created:" + count);
         }
 
-        private async Task RunSession(IFSSession session, ushort index, int count, bool needNetty)
+        private async Task RunSession(FSSession session, ushort index, int count, bool needNetty)
         {
             var account = "account" + index;
             var password = "111111";

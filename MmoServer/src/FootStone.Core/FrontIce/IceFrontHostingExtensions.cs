@@ -5,6 +5,7 @@ using Orleans.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using FootStone.FrontOrleans;
 
 namespace FootStone.FrontIce
 {
@@ -29,32 +30,58 @@ namespace FootStone.FrontIce
 
     public static class IceFrontSessionExtensions
     {
-        internal static ConcurrentDictionary<string, SessionI> sessions = new ConcurrentDictionary<string, SessionI>();
-        internal static ConcurrentDictionary<string, string> sessionBinds = new ConcurrentDictionary<string, string>();
-
-        public static SessionI ObtainSessionByIPAddress(this Ice.Current current)
+        internal static Dictionary<string, SessionI> sessions = new Dictionary<string, SessionI>();
+        internal static ConcurrentDictionary<string, SessionI> sessionBinds = new ConcurrentDictionary<string, SessionI>();
+        
+        public static SessionI BindSession(this Ice.Current current, string key, out bool bindsucs)
         {
-            SessionI session = null;
+            bindsucs = false;
             if (!(current.con.getInfo() is Ice.TCPConnectionInfo connection))
             {
-                return session;
+                return null;
             }
 
-            var key = FootStone.Core.HashUnit.GetMd5Str(connection.remoteAddress + ":" + connection.remotePort);
-            if (sessions.ContainsKey(key))
+            var exist = sessions.Remove(connection.connectionId, out var session);
+            if (exist)
             {
-                session = sessions[key];
+                bindsucs = sessionBinds.TryAdd(key, session);
+                session.Identity = key;
+                connection.connectionId = key;
             }
 
             return session;
         }
 
-        public static SessionI ObtainSessionByBindstr(this IServantBase servant, string key)
+        public static SessionI UnbindSession(this Ice.Current current)
         {
-            var exist = sessionBinds.TryGetValue(key, out string ipkey);
-            //if (!exist) return null;
-            exist = sessions.TryGetValue(ipkey, out SessionI session);
-            //if (!exist) return null;
+            if (!(current.con.getInfo() is Ice.TCPConnectionInfo connection))
+            {
+                return null;
+            }
+
+            sessionBinds.TryRemove(connection.connectionId, out var session);
+            connection.connectionId = null;
+
+            return session;
+        }
+
+        public static SessionI ObtainSession(this IServantBase servant, Ice.Current current)
+        {
+            if (servant is null) return null;
+            if (!(current.con.getInfo() is Ice.TCPConnectionInfo connection))
+            {
+                return null;
+            }
+
+            sessionBinds.TryGetValue(connection.connectionId, out var session);
+
+            return session;
+        }
+
+        public static SessionI ObtainSession(this IObserverBase observer, string key)
+        {
+            if (observer is null) return null;
+            sessionBinds.TryGetValue(key, out var session);
 
             return session;
         }

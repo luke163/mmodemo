@@ -21,7 +21,7 @@ public class GameLogic : MonoBehaviour
     void Update()
     {
         confineTime += Time.deltaTime;
-        if (confineTime < 0.025f) return;
+        if (confineTime < 0.03f) return;
         
         // 遥感操作
         float horizontal = ETCInput.GetAxis("Horizontal");

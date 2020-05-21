@@ -3,7 +3,7 @@ using System;
 
 namespace FootStone.Client
 {
-    public class FSSession : IFSSession
+    public class FSSession
     {
         private string id;
         private SessionIce session;

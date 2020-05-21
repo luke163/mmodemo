@@ -29,15 +29,14 @@ namespace FootStone.FrontIce
                 return;
             }
 
-            var key = FootStone.Core.HashUnit.GetMd5Str(connection.remoteAddress + ":" + connection.remotePort);
-            var sessionI = new SessionI(proxy, key);
+            var session = new SessionI(proxy);
             // Never close this connection from the client and turn on heartbeats with a timeout of 30s
-            current.con.getInfo().connectionId = sessionI.Id;
+            current.con.getInfo().connectionId = session.Id;
             current.con.setACM(30, ACMClose.CloseOff, ACMHeartbeat.HeartbeatAlways);
-            current.con.setCloseCallback(_ => DestroySession(key));
+            current.con.setCloseCallback(_ => DestroySessionCallback(session));
 
-            IceFrontSessionExtensions.sessions.TryAdd(key, sessionI);
-            logger.print($"Create session :{sessionI.Id},{serverName} sessions count:{IceFrontSessionExtensions.sessions.Count}");
+            IceFrontSessionExtensions.sessions.TryAdd(session.Id, session);
+            logger.print($"Create session :{session.Id},{serverName}");
         }
 
         public override void Shutdown(Ice.Current current)
@@ -48,15 +47,11 @@ namespace FootStone.FrontIce
             logger.print("Ice Shutting downed!");
         }
 
-        private void DestroySession(string key)
+        private void DestroySessionCallback(SessionI session)
         {
-            var ret = IceFrontSessionExtensions.sessions.Remove(key, out SessionI sessionI);
-            sessionI.Unbind();
-            if (ret)
-            {
-                logger.print($"{sessionI.Id} is destroyed from thread " + $"{Thread.CurrentThread.ManagedThreadId}," +
-                    $"current sessions count:{IceFrontSessionExtensions.sessions.Count}.");
-            }
+            IceFrontSessionExtensions.sessions.Remove(session.Id);
+            IceFrontSessionExtensions.sessionBinds.TryRemove(session.Identity, out _);
+            logger.print($"{session.Id} is destroyed from thread " + $"{Thread.CurrentThread.ManagedThreadId}");
         }
     }
 

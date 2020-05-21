@@ -9,16 +9,14 @@ namespace FootStone.FrontIce
         private static ulong sss = 0;
 
         public string Id { get; }
+        public string Identity { get; set; }
         public ISessionPushPrx SessionPushPrx { get; private set; }
         private Dictionary<string, object> attributes = new Dictionary<string, object>();
-        private string bindIdentify;
-        private string addressIdentify;
 
-        public SessionI(ISessionPushPrx proxy, string addresskey)
+        public SessionI(ISessionPushPrx proxy)
         {
-            this.Id = (++sss).ToString();
+            this.Id = $"__{(++sss)}__"; //下滑线防止与绑定标识符撞衫
             this.SessionPushPrx = proxy;
-            this.addressIdentify = addresskey;
         }
 
         public void Destroy()
@@ -44,20 +42,6 @@ namespace FootStone.FrontIce
         {
             attributes.Remove(key);
         }
-
-        public void Bind(string key)
-        {
-            IceFrontSessionExtensions.sessionBinds.TryAdd(key, addressIdentify);
-            bindIdentify = key;
-        }
-
-        public void Unbind()
-        {
-            IceFrontSessionExtensions.sessionBinds.TryRemove(bindIdentify, out _);
-            bindIdentify = null;
-        }
-
-        public string Identity => bindIdentify;
 
         public void Dispose()
         {

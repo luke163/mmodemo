@@ -15,7 +15,7 @@ namespace SampleClient
                 ushort startIndex = args.Length > 1 ? ushort.Parse(args[1]) : (ushort)0;
                 bool needNetty = args.Length > 2 ? bool.Parse(args[2]) : true;
 
-                string ip = args.Length > 3 ?args[3] : "192.168.56.104";
+                string ip = args.Length > 3 ?args[3] : "127.0.0.1";
                 int port = args.Length > 4 ? int.Parse(args[4]) : 4061;
 
                 //OldTest(count, startIndex, needNetty);

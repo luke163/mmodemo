@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FootStone.Client
 {
-    public class FSClient : IFSClient
+    public class FSClient
     {
         private NetworkIce networkIce;
         private IceClientOptions iceOptions;
@@ -24,7 +24,7 @@ namespace FootStone.Client
         }
 
         /// 创建session
-        public async Task<IFSSession> CreateSession(string ip, int port)
+        public async Task<FSSession> CreateSession(string ip, int port)
         {
             var sessionIce = await networkIce.CreateSession(ip, port);
 

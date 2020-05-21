@@ -11,7 +11,7 @@ using FootStone.FrontIce;
 using FootStone.FrontOrleans;
 using Sample.Protocol;
 
-namespace Sample.FrontServer
+namespace Sample.ClusterServer
 {
     class Program
     {
@@ -37,11 +37,12 @@ namespace Sample.FrontServer
             //使用Orleans client
             hostBuilder.UseOrleansClient(clientBuilder =>
             {
-                clientBuilder.UseAdoNetClustering(options =>
-                {
-                    options.ConnectionString = mysqlConnectCluster;
-                    options.Invariant = "MySql.Data.MySqlClient";
-                });
+                clientBuilder.UseLocalhostClustering();
+                //clientBuilder.UseAdoNetClustering(options =>
+                //{
+                //    options.ConnectionString = mysqlConnectCluster;
+                //    options.Invariant = "MySql.Data.MySqlClient";
+                //});
                 clientBuilder.Configure<ClusterOptions>(options =>
                 {
                     options.ClusterId = "luke";
